@@ -2,15 +2,21 @@
 using FastEndpoints.Swagger;
 using TrefingreGymControl.Api.Domain.Exceptions;
 using TrefingreGymControl.Api.Domain.Subscriptions;
+using TrefingreGymControl.Api.Persistence;
 
 namespace TrefingreGymControl.Features.Subscriptions.BuySubscription;
 
 sealed class Endpoint : Endpoint<Request, Response, Mapper>
 {
     private ISubscriptionService _subscriptionService;
-    public Endpoint(ISubscriptionService subscriptionService)
+    private readonly TFGymControlDbContext _dbContext;
+
+
+    public Endpoint(ISubscriptionService subscriptionService, TFGymControlDbContext dbContext)
     {
         _subscriptionService = subscriptionService;
+        _dbContext = dbContext;
+
     }
     public override void Configure()
     {
@@ -37,6 +43,7 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
         try
         {
             await _subscriptionService.BuySubscriptionAsync(req.UserId, req.SubscriptionTypeId, req.StartSubscriptionAt, ct);
+            await _dbContext.SaveChangesAsync();
             await SendOkAsync(new Response(), ct);
         }
         catch (NoUserWithIdFoundException ex)

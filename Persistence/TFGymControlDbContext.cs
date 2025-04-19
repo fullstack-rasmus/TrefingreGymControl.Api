@@ -34,20 +34,9 @@ namespace TrefingreGymControl.Api.Persistence
         {
             var entitiesWithEvents = this.GetDomainEntitiesWithEvents();
 
-            var result = await base.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Saved initial changes. Dispatching domain events...");
-
             await _domainEventDispatcher.DispatchEventsAsync(entitiesWithEvents, cancellationToken);
 
-            if (ChangeTracker.HasChanges())
-            {
-                _logger.LogInformation("Changes detected after event dispatch, saving again...");
-                await base.SaveChangesAsync(cancellationToken);
-            }
-            else
-            {
-                _logger.LogInformation("No additional changes to save after domain event dispatch.");
-            }
+            var result = await base.SaveChangesAsync(cancellationToken);
 
             return result;
         }

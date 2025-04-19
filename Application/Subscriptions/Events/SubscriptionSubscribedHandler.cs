@@ -22,8 +22,9 @@ namespace TrefingreGymControl.Api.Application.Subscriptions.Events
         {
             _logger.LogInformation("Handling SubscriptionSubscribedEvent for UserId: {UserId}, SubscriptionId: {SubscriptionId}, Price: {Price}", domainEvent.UserId, domainEvent.SubscriptionId, domainEvent.Price);
             var receipt = _receiptService.CreateSubscriptionReceipt(domainEvent.UserId, domainEvent.SubscriptionId, domainEvent.Price, "New subscription", cancellationToken);
-            await _context.Receipts.AddAsync(receipt, cancellationToken);
+            _context.Receipts.Add(receipt);
             _logger.LogInformation("Receipt {ReceiptId} created for UserId: {UserId}, SubscriptionId: {SubscriptionId}", receipt.Id, domainEvent.UserId, domainEvent.SubscriptionId);
+            await Task.CompletedTask;
         }
     }
 }

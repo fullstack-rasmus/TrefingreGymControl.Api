@@ -30,7 +30,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             await _dbContext.SaveChangesAsync(ct);
         }
 
-        public Task BuySubscriptionAsync(Guid userId, Guid subscriptionTypeId, DateTimeOffset startDate, CancellationToken ct = default)
+        public async Task BuySubscriptionAsync(Guid userId, Guid subscriptionTypeId, DateTimeOffset startDate, CancellationToken ct = default)
         {
             var subscriptionType = _dbContext.SubscriptionTypes
                 .AsNoTracking()
@@ -50,7 +50,6 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
 
             _dbContext.Subscriptions.Add(subscription);
             _logger.LogInformation("Buying subscription: {Subscription}", subscription);
-            return _dbContext.SaveChangesAsync(ct);
         }
 
         public Subscription Subscribe(Guid userId, DateTimeOffset startDate, SubscriptionType subscriptionType, bool isResubscription = false)
