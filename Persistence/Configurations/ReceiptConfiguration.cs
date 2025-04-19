@@ -16,6 +16,10 @@ namespace TrefingreGymControl.Api.Persistence.Configurations
             builder.Property(u => u.Price).IsRequired().HasColumnType("decimal(18,2)");
             builder.Property(u => u.ReceiptType).IsRequired();
             builder.Property(u => u.CreatedAt).IsRequired().HasDefaultValueSql("CURRENT_TIMESTAMP");
+            builder.HasOne(u => u.Subscription)
+                .WithMany()
+                .HasForeignKey(u => u.SubscriptionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

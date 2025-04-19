@@ -32,12 +32,14 @@ namespace TrefingreGymControl.Api.Persistence
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var entitiesWithEvents = this.GetDomainEntitiesWithEvents();
-
-            await _domainEventDispatcher.DispatchEventsAsync(entitiesWithEvents, cancellationToken);
-
             var result = await base.SaveChangesAsync(cancellationToken);
-
+            var entitiesWithEvents = this.GetDomainEntitiesWithEvents();
+            await _domainEventDispatcher.DispatchEventsAsync(entitiesWithEvents, cancellationToken);
+            if(ChangeTracker.HasChanges())
+            {
+                _logger.LogInformation("Changes detected in the context. Saving changes to the database.");
+                await base.SaveChangesAsync(cancellationToken);
+            }
             return result;
         }
 

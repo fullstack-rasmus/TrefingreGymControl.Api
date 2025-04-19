@@ -54,7 +54,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
 
         public Subscription Subscribe(Guid userId, DateTimeOffset startDate, SubscriptionType subscriptionType, bool isResubscription = false)
         {
-            var subscription = Subscription.RegisterNewSubscription(userId, subscriptionType.Id, subscriptionType.Price);
+            var subscription = Subscription.RegisterNewSubscription(userId, subscriptionType.Id, subscriptionType.Price, isResubscription);
 
             _logger.LogInformation("Registering new subscription subscription: {SubscriptionId}", subscription.Id);
             subscription.SetSubscriptionType(subscriptionType.Id);
@@ -128,14 +128,11 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
 
         public async Task<List<Subscription>> GetUserSubscriptionsAsync(Guid userId, CancellationToken ct = default)
         {
-            var s = await _dbContext.Subscriptions
+            return await _dbContext.Subscriptions
                 .Include(x => x.SubscriptionType)
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .ToListAsync(ct);
-            _dbContext.Subscriptions.RemoveRange(s);
-            await _dbContext.SaveChangesAsync();
-            return s;
         }
     }
 }

@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TrefingreGymControl.Api.Domain.Common;
 using TrefingreGymControl.Api.Domain.Receipts.Events;
-using TrefingreGymControl.Api.Domain.Subscriptions.Events;
-using TrefingreGymControl.Api.Domain.Users;
 
 namespace TrefingreGymControl.Api.Domain.Subscriptions
 {
@@ -21,15 +15,17 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         public decimal Price { get; set; }
         public bool IsActive { get; set; }
         public bool IsCanceled { get; set; }
+        public bool IsDeleted { get; set; }
 
-        public static Subscription RegisterNewSubscription(Guid userId, Guid subscriptionTypeId, decimal price)
+        public static Subscription RegisterNewSubscription(Guid userId, Guid subscriptionTypeId, decimal price, bool isResubscription)
         {
             var newSub = new Subscription();
+            var description = isResubscription ? "Resubscription" : "New subscription";
             newSub.SetUser(userId);
             newSub.SetSubscriptionType(subscriptionTypeId);
             newSub.SetPrice(price);
 
-            newSub.AddDomainEvent(new ReceiptRequestedEvent(userId, newSub.Id));
+            newSub.AddDomainEvent(new ReceiptRequestedEvent(userId, newSub.Id, description));
 
             return newSub;
         }
@@ -70,11 +66,6 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
                 throw new InvalidOperationException("EndDate must be greater than StartDate to activate the subscription.");
 
             IsActive = true;
-
-            if (isRenewed)
-                AddDomainEvent(new SubscriptionRenewedEvent(UserId, SubscriptionTypeId, Id, Price));
-            else
-                AddDomainEvent(new SubscriptionSubscribedEvent(UserId, SubscriptionTypeId, Id, Price));
         }
 
         public void SetEndDate(DateTimeOffset endDate)
@@ -106,6 +97,11 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             if (userId == Guid.Empty)
                 throw new InvalidOperationException("UserId must be set to register a new subscription.");
             UserId = userId;
+        }
+
+        public void Delete()
+        {
+            IsDeleted = true;
         }
     }
 }
