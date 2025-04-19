@@ -1,0 +1,13 @@
+using TrefingreGymControl.Api.Domain.Subscriptions;
+
+namespace TrefingreGymControl.Domain.Subscriptions.Dto;
+
+public class SubscriptionTypeDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public int DurationValue { get; set; }
+    public SubscriptionDurationUnit DurationUnit { get; set; }
+    public decimal Price { get; set; }
+    public bool IsActive { get; set; }
+}

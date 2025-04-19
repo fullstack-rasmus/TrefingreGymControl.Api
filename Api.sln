@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrefingreGymControl.Api", "TrefingreGymControl.Api.csproj", "{DACE3BE9-7799-7E10-9BA3-865105F8C745}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DACE3BE9-7799-7E10-9BA3-865105F8C745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACE3BE9-7799-7E10-9BA3-865105F8C745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACE3BE9-7799-7E10-9BA3-865105F8C745}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DACE3BE9-7799-7E10-9BA3-865105F8C745}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2BEDC409-C7E6-4018-871C-ACE201AC5BD0}
+	EndGlobalSection
+EndGlobal
