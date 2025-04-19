@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrefingreGymControl.Api.Domain.Common;
+using TrefingreGymControl.Api.Domain.Receipts.Events;
 using TrefingreGymControl.Api.Domain.Subscriptions.Events;
 using TrefingreGymControl.Api.Domain.Users;
 
@@ -23,7 +24,14 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
 
         public static Subscription RegisterNewSubscription(Guid userId, Guid subscriptionTypeId, decimal price)
         {
-            return new Subscription();
+            var newSub = new Subscription();
+            newSub.SetUser(userId);
+            newSub.SetSubscriptionType(subscriptionTypeId);
+            newSub.SetPrice(price);
+
+            newSub.AddDomainEvent(new ReceiptRequestedEvent(userId, newSub.Id));
+
+            return newSub;
         }
 
         public void Cancel()
@@ -63,10 +71,10 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
 
             IsActive = true;
 
-            if(isRenewed)
-                AddDomainEvent(new SubscriptionRenewedEvent(UserId,SubscriptionTypeId, Id, Price));
+            if (isRenewed)
+                AddDomainEvent(new SubscriptionRenewedEvent(UserId, SubscriptionTypeId, Id, Price));
             else
-                AddDomainEvent(new SubscriptionSubscribedEvent(UserId,SubscriptionTypeId, Id, Price));
+                AddDomainEvent(new SubscriptionSubscribedEvent(UserId, SubscriptionTypeId, Id, Price));
         }
 
         public void SetEndDate(DateTimeOffset endDate)

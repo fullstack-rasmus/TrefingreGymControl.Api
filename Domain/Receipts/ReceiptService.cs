@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using TrefingreGymControl.Api.Domain.Subscriptions;
 using TrefingreGymControl.Api.Persistence;
 
 namespace TrefingreGymControl.Api.Domain.Receipts
@@ -13,11 +14,8 @@ namespace TrefingreGymControl.Api.Domain.Receipts
             _dbContext = dbContext;
         }
 
-        public Receipt CreateSubscriptionReceipt(Guid userId, Guid subscriptionId, decimal price, string description, CancellationToken cancellationToken = default)
+        public Receipt CreateSubscriptionReceipt(Guid userId, Subscription subscription, decimal price, string description, CancellationToken cancellationToken = default)
         {
-            var subscription = _dbContext.Subscriptions
-                .FirstOrDefault(x => x.Id == subscriptionId && x.UserId == userId);
-            
             var receipt = Receipt.NewReceipt(ReceiptType.Subscription);
             receipt.AttachToUser(userId);
             receipt.AttachToSubscription(subscription);
