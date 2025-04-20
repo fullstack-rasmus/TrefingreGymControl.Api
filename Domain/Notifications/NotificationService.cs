@@ -15,6 +15,13 @@ namespace TrefingreGymControl.Api.Domain.Notifications
             _logger = logger;
         }
 
+        public Task AddNotificationAsync(Guid userId, string message, CancellationToken cancellationToken = default)
+        {
+            var notification = new Notification(userId, message);
+            _dbContext.Notifications.Add(notification);
+            return _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task DeleteNotificationAsync(Guid notificationId, CancellationToken cancellationToken = default)
         {
             var notification = await _dbContext.Notifications.FirstOrDefaultAsync(n => n.Id == notificationId, cancellationToken);

@@ -1,6 +1,10 @@
+using TrefingreGymControl.Api.Domain.Common;
+using TrefingreGymControl.Api.Domain.Resources;
+using TrefingreGymControl.Api.Domain.Subscriptions.Events;
+
 namespace TrefingreGymControl.Api.Domain.Subscriptions
 {
-    public class SubscriptionType
+    public class SubscriptionType : AggregateRoot
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
@@ -9,6 +13,8 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         public int DurationValue { get; set; }
         public bool IsActive { get; set; } = true;
         public bool IsRecurring { get; set; }
+        public List<Resource> AccessibleResources { get; set; } = new List<Resource>();
+        public bool IsDeleted { get; set; }
 
         public SubscriptionType(string name, decimal price, SubscriptionDurationUnit subscriptionDurationUnit, int durationValue)
         {
@@ -22,10 +28,16 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         {
             IsActive = false;
         }
-        
+
         public void Activate()
         {
             IsActive = true;
+        }
+
+        public void Delete()
+        {
+            IsDeleted = true;
+            AddDomainEvent(new SubscriptionTypeDeletedEvent(Id));
         }
 
         public void Update(string name, decimal price)
@@ -38,10 +50,20 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         {
             IsRecurring = true;
         }
-        
+
         public void MakeNonRecurring()
         {
             IsRecurring = false;
+        }
+
+        public void AddResource(Resource resource)
+        {
+            AccessibleResources.Add(resource);
+        }
+
+        public void RemoveResource(Resource resource)
+        {
+            AccessibleResources.Remove(resource);
         }
     }
 }

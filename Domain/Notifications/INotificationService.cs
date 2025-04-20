@@ -10,5 +10,6 @@ namespace TrefingreGymControl.Api.Domain.Notifications
         Task<List<Notification>> GetUserNotificationsAsync(Guid userId, CancellationToken cancellationToken = default);
         Task MarkNotificationAsReadAsync(Guid notificationId, CancellationToken cancellationToken = default);
         Task DeleteNotificationAsync(Guid notificationId, CancellationToken cancellationToken = default);
+        Task AddNotificationAsync(Guid userId, string message, CancellationToken cancellationToken = default);
     }
 }

@@ -21,7 +21,14 @@ sealed class Mapper : ResponseMapper<Response, object>
                 DurationValue = st.DurationValue,
                 DurationUnit = st.SubscriptionDurationUnit,
                 Price = st.Price,
-                IsActive = st.IsActive
+                IsActive = st.IsActive,
+                IsRecurring = st.IsRecurring,
+                IsDeleted = st.IsDeleted,
+                Resources = st.AccessibleResources.Select(r => new ResourceDto
+                {
+                    Id = r.Id,
+                    Name = r.Name
+                }).ToList()
             }).ToList()
         };
     }

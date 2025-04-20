@@ -44,7 +44,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
 
         public void DeactivateIfExpired()
         {
-            if (IsCanceled && IsActive && EndDate < DateTimeOffset.UtcNow)
+            if (IsCanceled && IsActive && EndDate.Date < DateTimeOffset.UtcNow.Date)
             {
                 IsActive = false;
             }

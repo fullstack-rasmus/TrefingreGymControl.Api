@@ -24,21 +24,25 @@ namespace TrefingreGymControl.Api.BackgroundServices.Subscriptions
                     using var scope = _serviceProvider.CreateScope();
                     var db = scope.ServiceProvider.GetRequiredService<TFGymControlDbContext>();
 
-                    var expiredSubs = await db.Subscriptions
-                        .Where(s => s.IsCanceled && s.IsActive && s.EndDate < DateTimeOffset.UtcNow)
+                    var activeSubs = await db.Subscriptions
+                        .Where(s => s.IsCanceled && s.IsActive)
                         .ToListAsync(stoppingToken);
-                    
-                    _logger.LogInformation("Found {Count} expired subscriptions to process", expiredSubs.Count);
 
-                    foreach (var sub in expiredSubs)
+                    _logger.LogInformation("Found {Count} expired subscriptions to process", activeSubs.Count);
+                    int expiredSubsCount = 0;
+                    foreach (var sub in activeSubs)
                     {
                         sub.DeactivateIfExpired();
-                        _logger.LogInformation("Deactivated canceled subscription {Id} due to Enddate being reached", sub.Id);
+                        if(!sub.IsActive)
+                        {
+                            expiredSubsCount++;
+                            _logger.LogInformation("Deactivated canceled subscription {Id} due to Enddate being reached", sub.Id);
+                        }
                     }
                     
                     await db.SaveChangesAsync(stoppingToken);
 
-                    _logger.LogInformation("Processed {Count} expired subscriptions", expiredSubs.Count);
+                    _logger.LogInformation("Processed {Count} expired subscriptions", expiredSubsCount);
                     _logger.LogInformation("SubscriptionCancellationBackgroundService completed processing.");
                 }
                 catch (Exception ex)

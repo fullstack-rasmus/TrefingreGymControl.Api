@@ -10,7 +10,7 @@ namespace TrefingreGymControl.Api.Utils
         private static readonly Dictionary<string, int> RoleRanks = new()
         {
             { "Admin", 3 },
-            { "Manager", 2 },
+            { "Coach", 2 },
             { "User", 1 }
         };
 

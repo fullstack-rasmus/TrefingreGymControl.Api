@@ -2,6 +2,7 @@
 using FastEndpoints;
 using FluentValidation;
 using TrefingreGymControl.Api.Domain.Subscriptions;
+using TrefingreGymControl.Domain.Subscriptions.Dto;
 
 namespace TrefingreGymControl.Features.SubscriptionTypes.AddSubscriptionType;
 
@@ -11,6 +12,8 @@ sealed class Request
     public int DurationValue { get; set; }
     public SubscriptionDurationUnit DurationUnit { get; set; }
     public decimal Price { get; set; }
+    public bool IsRecurring { get; set; }
+    public List<ResourceDto> Resources { get; set; } = new();
 }
 
 sealed class Validator : Validator<Request>

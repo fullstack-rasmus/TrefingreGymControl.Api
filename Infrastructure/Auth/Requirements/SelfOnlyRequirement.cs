@@ -13,7 +13,6 @@ namespace TrefingreGymControl.Api.Infrastructure.Auth.Permissions
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SelfOnlyRequirement requirement)
         {
-
             var httpContext = _httpContextAccessor.HttpContext;
             var routeId = httpContext?.Request.RouteValues["userId"]?.ToString();
             var userId = context.User.FindFirst("UserId")?.Value;

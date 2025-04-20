@@ -33,15 +33,12 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         public async Task BuySubscriptionAsync(Guid userId, Guid subscriptionTypeId, DateTimeOffset startDate, CancellationToken ct = default)
         {
             var subscriptionType = _dbContext.SubscriptionTypes
-                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == subscriptionTypeId) ?? throw new SubscriptionTypeNotFoundException(subscriptionTypeId.ToString(), _logger);
 
             var user = _dbContext.Users
-                .AsNoTracking()
                 .FirstOrDefault(x => x.Id == userId) ?? throw new NoUserWithIdFoundException(userId.ToString(), _logger);
 
             var existingSubscription = _dbContext.Subscriptions
-                .AsNoTracking()
                 .FirstOrDefault(x => x.UserId == userId && x.SubscriptionTypeId == subscriptionTypeId && x.IsActive);
 
             if (existingSubscription != null)
@@ -98,15 +95,15 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             if (onlyActive)
             {
                 var activeSubscriptionTypes = await _dbContext.SubscriptionTypes
-                    .AsNoTracking()
-                    .Where(x => x.IsActive)
+                    .Include(x => x.AccessibleResources)
+                    .Where(x => x.IsActive && !x.IsDeleted)
                     .ToListAsync(ct);
                 return activeSubscriptionTypes;
             }
             else
             {
                 var allSubscriptionTypes = await _dbContext.SubscriptionTypes
-                    .AsNoTracking()
+                    .Include(x => x.AccessibleResources)
                     .ToListAsync(ct);
                 return allSubscriptionTypes;
             }
@@ -130,7 +127,6 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         {
             return await _dbContext.Subscriptions
                 .Include(x => x.SubscriptionType)
-                .AsNoTracking()
                 .Where(x => x.UserId == userId)
                 .ToListAsync(ct);
         }

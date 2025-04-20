@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 using TrefingreGymControl.Api.Domain.Exceptions;
+using TrefingreGymControl.Api.Domain.Resources;
 using TrefingreGymControl.Api.Domain.Subscriptions;
 
 namespace TrefingreGymControl.Features.SubscriptionTypes.AddSubscriptionType;
@@ -8,9 +9,11 @@ namespace TrefingreGymControl.Features.SubscriptionTypes.AddSubscriptionType;
 sealed class Endpoint : Endpoint<Request, Response, Mapper>
 {
     private readonly ISubscriptionService _subscriptionService;
+    private readonly IResourceService _resourceService;
 
-    public Endpoint(ISubscriptionService subscriptionService)
+    public Endpoint(ISubscriptionService subscriptionService, IResourceService resourceService)
     {
+        _resourceService = resourceService;
         _subscriptionService = subscriptionService;
     }
 
@@ -32,7 +35,16 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         var subscriptionType = Map.ToEntity(req);
-
+        
+        if(req.IsRecurring)
+            subscriptionType.MakeRecurring();
+        
+        foreach (var resourceId in req.Resources)
+        {
+            var resource = await _resourceService.GetResourceByIdAsync(resourceId, ct);
+            subscriptionType.AddResource(resource);
+        }
+        
         try
         {
             await _subscriptionService.AddSubscriptionTypeAsync(subscriptionType, ct);

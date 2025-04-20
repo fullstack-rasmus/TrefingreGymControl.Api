@@ -19,7 +19,8 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
     {
         Get("/users/{userId}/notifications");
         Policies("SelfOnly", "UserOrAbove");
-        Description(x=> {
+        Description(x =>
+        {
             x.AutoTagOverride("Notifications");
         });
         Summary(x =>
@@ -33,20 +34,15 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
 
     public override async Task HandleAsync(Request req, CancellationToken ct)
     {
-        var userId = User.GetUserId();
-        if (userId.HasValue)
+        var notifications = await _notificationService.GetUserNotificationsAsync(req.UserId, ct);
+        if (notifications is null || !notifications.Any())
         {
-
-            var notifications = await _notificationService.GetUserNotificationsAsync(userId.Value, ct);
-            if (notifications is null || !notifications.Any())
-            {
-                AddError("No notifications found for the user.");
-                await SendNotFoundAsync(cancellation: ct);
-            }
-            else
-            {
-                await SendOkAsync(Map.FromEntity(notifications), cancellation: ct);
-            }
+            AddError("No notifications found for the user.");
+            await SendNotFoundAsync(cancellation: ct);
+        }
+        else
+        {
+            await SendOkAsync(Map.FromEntity(notifications), cancellation: ct);
         }
     }
 }

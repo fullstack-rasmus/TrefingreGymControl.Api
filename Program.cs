@@ -15,6 +15,7 @@ using TrefingreGymControl.Api.Utils;
 using TrefingreGymControl.Api.Domain.Receipts;
 using TrefingreGymControl.Api.Application.Common;
 using TrefingreGymControl.Api.Application.Receipts;
+using TrefingreGymControl.Api.Domain.Resources;
 
 namespace TrefingreGymControl.Api
 {
@@ -78,6 +79,8 @@ namespace TrefingreGymControl.Api
             builder.Services.AddTransient<INotificationService, NotificationService>();
             builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
             builder.Services.AddTransient<IReceiptService, ReceiptService>();
+            builder.Services.AddTransient<IResourceService, ResourceService>();
+            builder.Services.AddTransient<ISubscriptionTypeService, SubscriptionTypeService>();
             builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             builder.Services.Scan(scan => scan
                 .FromAssemblyOf<ReceiptRequestedHandler>() // eller typeof(IDomainEvent)
@@ -100,15 +103,21 @@ namespace TrefingreGymControl.Api
                 opt.AddPolicy("SelfOrAdminOnly", p => p.Requirements.Add(new SelfOrAdminOnlyRequirement()));
                 opt.AddPolicy("UserOrAbove", p=> p.RequireAssertion(ctx => {
                     var role = ctx.User.FindFirst("role")?.Value;
-                    return RoleHierarchy.HasAtLeastRole(role, "User");
+                    if(role != null)
+                        return RoleHierarchy.HasAtLeastRole(role, "User");
+                    return false;
                 }));
                 opt.AddPolicy("CoachOrAbove", p=> p.RequireAssertion(ctx => {
                     var role = ctx.User.FindFirst("role")?.Value;
-                    return RoleHierarchy.HasAtLeastRole(role, "Coach");
+                    if(role != null)
+                        return RoleHierarchy.HasAtLeastRole(role, "Coach");
+                    return false;
                 }));
                 opt.AddPolicy("AdminOrAbove", p=> p.RequireAssertion(ctx => {
                     var role = ctx.User.FindFirst("role")?.Value;
-                    return RoleHierarchy.HasAtLeastRole(role, "Admin");
+                    if(role != null)
+                        return RoleHierarchy.HasAtLeastRole(role, "Admin");
+                    return false;
                 }));
             });
         }
