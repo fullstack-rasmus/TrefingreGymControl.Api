@@ -10,5 +10,6 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         Task CancelSubscriptionAsync(Guid subscriptionId, CancellationToken ct = default);
         Task ToogleSubscriptionTypeActivationStateAsync(Guid subscriptionTypeId, bool activate, CancellationToken ct = default);
         Subscription Subscribe(Guid userId, DateTimeOffset startDate, SubscriptionType subscriptionType, bool isResubscription = false);
+        Task<Subscription> GetSubscriptionAsync(Guid subscriptionId, CancellationToken ct = default);
     }
 }

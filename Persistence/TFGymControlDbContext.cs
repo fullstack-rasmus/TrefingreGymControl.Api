@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TrefingreGymControl.Api.Application.Common;
 using TrefingreGymControl.Api.Domain.Notifications;
+using TrefingreGymControl.Api.Domain.Payments;
 using TrefingreGymControl.Api.Domain.Receipts;
 using TrefingreGymControl.Api.Domain.Resources;
 using TrefingreGymControl.Api.Domain.Subscriptions;
@@ -25,6 +26,7 @@ namespace TrefingreGymControl.Api.Persistence
         public DbSet<Subscription> Subscriptions => Set<Subscription>();
         public DbSet<Receipt> Receipts => Set<Receipt>();
         public DbSet<Resource> Resources => Set<Resource>();
+        public DbSet<Payment> Payments => Set<Payment>();
 
         public TFGymControlDbContext(DbContextOptions<TFGymControlDbContext> options, IDomainEventDispatcher domainEventDispatcher, ILogger<TFGymControlDbContext> logger) : base(options)
         {

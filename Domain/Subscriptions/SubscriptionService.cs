@@ -130,5 +130,14 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
                 .Where(x => x.UserId == userId)
                 .ToListAsync(ct);
         }
+
+        public async Task<Subscription> GetSubscriptionAsync(Guid subscriptionId, CancellationToken ct = default)
+        {
+            var subscription = await _dbContext.Subscriptions
+                .Include(x => x.SubscriptionType)
+                .FirstOrDefaultAsync(x => x.Id == subscriptionId) ?? throw new SubscriptionNotFoundException(subscriptionId.ToString(), _logger);
+
+            return subscription;
+        }
     }
 }

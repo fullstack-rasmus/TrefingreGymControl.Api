@@ -15,11 +15,13 @@ namespace TrefingreGymControl.Api.Domain.Receipts
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public ReceiptType ReceiptType { get; set; }
+        public ReceiptPaymentStatus Status { get; set; }
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         public Receipt(ReceiptType receiptType)
         {
             ReceiptType = receiptType;
+            Status = ReceiptPaymentStatus.Pending;
         }
 
         public static Receipt NewReceipt(ReceiptType receiptType)
@@ -44,6 +46,19 @@ namespace TrefingreGymControl.Api.Domain.Receipts
         public void SetDescription(string description)
         {
             Description = description;
+        }
+
+        public void Paid()
+        {
+            Status = ReceiptPaymentStatus.Paid;
+        }
+        public void Refunded()
+        {
+            Status = ReceiptPaymentStatus.Refunded;
+        }
+        public void Canceled()
+        {
+            Status = ReceiptPaymentStatus.Canceled;
         }
     }
 }
