@@ -18,7 +18,7 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
     public override void Configure()
     {
         Get("/users/{userId}/notifications");
-        Policies("SelfOnly", "UserOrAbove");
+        Policies("UserOrAbove");
         Description(x =>
         {
             x.AutoTagOverride("Notifications");

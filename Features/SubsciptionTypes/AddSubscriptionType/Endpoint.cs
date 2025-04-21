@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FastEndpoints.Swagger;
 using TrefingreGymControl.Api.Domain.Exceptions;
+using TrefingreGymControl.Api.Domain.Fees;
 using TrefingreGymControl.Api.Domain.Resources;
 using TrefingreGymControl.Api.Domain.Subscriptions;
 
@@ -10,10 +11,13 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
 {
     private readonly ISubscriptionService _subscriptionService;
     private readonly IResourceService _resourceService;
+    private readonly IFeeService _feeService;
 
-    public Endpoint(ISubscriptionService subscriptionService, IResourceService resourceService)
+
+    public Endpoint(ISubscriptionService subscriptionService, IResourceService resourceService, IFeeService feeService)
     {
         _resourceService = resourceService;
+        _feeService = feeService;
         _subscriptionService = subscriptionService;
     }
 
@@ -43,6 +47,12 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
         {
             var resource = await _resourceService.GetResourceByIdAsync(resourceId, ct);
             subscriptionType.AddResource(resource);
+        }
+
+        foreach (var feeDto in req.Fees)
+        {
+            var fee = await _feeService.GetFeeAsync(feeDto.Id, ct);
+            subscriptionType.AddFee(fee);
         }
         
         try

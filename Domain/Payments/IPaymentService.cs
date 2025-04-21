@@ -9,5 +9,6 @@ namespace TrefingreGymControl.Api.Domain.Payments
     {
         Task<Payment> CreatePaymentAsync(Guid subscriptionTypeId, Guid userId, CancellationToken cancellationToken = default);
         Task<Payment> GetPaymentAsync(Guid paymentId, CancellationToken cancellationToken = default);
+        Task<Payment?> GetPaymentFromSubscription(Guid subscriptionId, CancellationToken cancellationToken = default);
     }
 }

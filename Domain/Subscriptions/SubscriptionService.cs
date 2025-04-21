@@ -30,7 +30,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             await _dbContext.SaveChangesAsync(ct);
         }
 
-        public async Task BuySubscriptionAsync(Guid userId, Guid subscriptionTypeId, DateTimeOffset startDate, CancellationToken ct = default)
+        public async Task<Subscription> BuySubscriptionAsync(Guid userId, Guid subscriptionTypeId, DateTimeOffset startDate, CancellationToken ct = default)
         {
             var subscriptionType = _dbContext.SubscriptionTypes
                 .FirstOrDefault(x => x.Id == subscriptionTypeId) ?? throw new SubscriptionTypeNotFoundException(subscriptionTypeId.ToString(), _logger);
@@ -41,12 +41,14 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             var existingSubscription = _dbContext.Subscriptions
                 .FirstOrDefault(x => x.UserId == userId && x.SubscriptionTypeId == subscriptionTypeId && x.IsActive);
 
-            if (existingSubscription != null)
+            if (existingSubscription != null && existingSubscription.IsDeleted == false)
                 throw new SubscriptionAlreadyExistsException(userId, subscriptionTypeId, _logger);
+
             Subscription subscription = Subscribe(userId, startDate, subscriptionType);
 
-            _dbContext.Subscriptions.Add(subscription);
+            await _dbContext.Subscriptions.AddAsync(subscription);
             _logger.LogInformation("Buying subscription: {Subscription}", subscription);
+            return subscription;
         }
 
         public Subscription Subscribe(Guid userId, DateTimeOffset startDate, SubscriptionType subscriptionType, bool isResubscription = false)
@@ -96,6 +98,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             {
                 var activeSubscriptionTypes = await _dbContext.SubscriptionTypes
                     .Include(x => x.AccessibleResources)
+                    .Include(x=> x.Fees)
                     .Where(x => x.IsActive && !x.IsDeleted)
                     .ToListAsync(ct);
                 return activeSubscriptionTypes;
@@ -104,6 +107,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
             {
                 var allSubscriptionTypes = await _dbContext.SubscriptionTypes
                     .Include(x => x.AccessibleResources)
+                    .Include(x=> x.Fees)
                     .ToListAsync(ct);
                 return allSubscriptionTypes;
             }

@@ -29,20 +29,32 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
     {
         var payment = await _paymentService.GetPaymentAsync(req.PaymentId, ct);
 
+        if (payment.Status == PaymentStatus.Completed)
+        {
+            if (payment is SubscriptionPayment subscriptionPayment)
+            {
+                var subscription = await _subscriptionService.GetSubscriptionAsync(subscriptionPayment.SubscriptionId, ct);
+                await SendAsync(Map.FromEntity(subscription), cancellation: ct);
+                return;
+            }
+        }
+
         if (req.PaymentSuccessfull)
         {
             payment.Status = PaymentStatus.Completed;
             if (payment is SubscriptionPayment subscriptionPayment)
             {
-                await _subscriptionService.BuySubscriptionAsync(payment.UserId, subscriptionPayment.SubscriptionTypeId, subscriptionPayment.StartDate, ct);
+                var subscription = await _subscriptionService.BuySubscriptionAsync(payment.UserId, subscriptionPayment.SubscriptionTypeId, subscriptionPayment.StartDate, ct);
+                subscriptionPayment.SetSubscriptionId(subscription.Id);
+                await _dbContext.SaveChangesAsync(ct);
+                await SendAsync(Map.FromEntity(subscription), cancellation: ct);
+                return;
             }
         }
         else
         {
             payment.Status = PaymentStatus.Failed;
+            await SendNotFoundAsync(ct);
         }
-
-        await _dbContext.SaveChangesAsync(ct);
-        await SendOkAsync(ct);
     }
 }

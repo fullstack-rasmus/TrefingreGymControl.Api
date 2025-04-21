@@ -1,4 +1,5 @@
 using TrefingreGymControl.Api.Domain.Common;
+using TrefingreGymControl.Api.Domain.Fees;
 using TrefingreGymControl.Api.Domain.Resources;
 using TrefingreGymControl.Api.Domain.Subscriptions.Events;
 
@@ -13,6 +14,7 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         public int DurationValue { get; set; }
         public bool IsActive { get; set; } = true;
         public bool IsRecurring { get; set; }
+        public List<Fee> Fees { get; set; } = new List<Fee>();
         public List<Resource> AccessibleResources { get; set; } = new List<Resource>();
         public bool IsDeleted { get; set; }
 
@@ -64,6 +66,11 @@ namespace TrefingreGymControl.Api.Domain.Subscriptions
         public void RemoveResource(Resource resource)
         {
             AccessibleResources.Remove(resource);
+        }
+
+        public void AddFee(Fee fee)
+        {
+            Fees.Add(fee);
         }
     }
 }

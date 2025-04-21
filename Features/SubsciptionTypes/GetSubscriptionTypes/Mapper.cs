@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using TrefingreGymControl.Api.Domain.Fees.Dto;
 using TrefingreGymControl.Api.Domain.Subscriptions;
 using TrefingreGymControl.Domain.Subscriptions.Dto;
 
@@ -28,6 +29,13 @@ sealed class Mapper : ResponseMapper<Response, object>
                 {
                     Id = r.Id,
                     Name = r.Name
+                }).ToList()
+                ,
+                Fees = st.Fees.Select(f => new FeeDto
+                {
+                    Id = f.Id,
+                    Amount = f.Amount,
+                    Description = f.Description
                 }).ToList()
             }).ToList()
         };

@@ -10,5 +10,6 @@ namespace TrefingreGymControl.Api.Domain.Receipts
     {
         Receipt CreateSubscriptionReceipt(Guid userId, Subscription subscription, decimal price, string description, CancellationToken cancellationToken = default);
         Task<List<Receipt>> GetReceiptsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task<IList<Receipt>> GetAllPendingReceiptsAsync(CancellationToken cancellationToken = default);
     }
 }

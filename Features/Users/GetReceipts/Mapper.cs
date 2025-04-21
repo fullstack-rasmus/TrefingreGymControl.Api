@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using TrefingreGymControl.Api.Domain.Fees.Dto;
 using TrefingreGymControl.Api.Domain.Receipts;
 using TrefingreGymControl.Api.Domain.Receipts.Dto;
 using TrefingreGymControl.Domain.Subscriptions.Dto;
@@ -18,6 +19,7 @@ sealed class Mapper : Mapper<Request, Response, List<Receipt>>
                 SubscriptionId = r.SubscriptionId,
                 Description = r.Description,
                 ReceiptType = r.ReceiptType,
+                Status = r.Status,
                 Subscription = new SubscriptionDto
                 {
                     Id = r.Subscription.Id,
@@ -29,6 +31,15 @@ sealed class Mapper : Mapper<Request, Response, List<Receipt>>
                         DurationUnit = r.Subscription.SubscriptionType.SubscriptionDurationUnit,
                         DurationValue = r.Subscription.SubscriptionType.DurationValue,
                         IsActive = r.Subscription.SubscriptionType.IsActive,
+                        IsDeleted = r.Subscription.SubscriptionType.IsDeleted,
+                        Fees = r.Subscription.SubscriptionType.Fees.Select(f => new FeeDto
+                        {
+                            Id = f.Id,
+                            Description = f.Description,
+                            Amount = f.Amount,
+                            IsRecurring = f.IsRecurringFee
+                        }).ToList(),
+                        IsRecurring = r.Subscription.SubscriptionType.IsRecurring
                     },
                     StartDate = r.Subscription.StartDate,
                     EndDate = r.Subscription.EndDate,

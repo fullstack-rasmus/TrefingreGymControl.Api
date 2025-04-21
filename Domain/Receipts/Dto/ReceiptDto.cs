@@ -11,4 +11,5 @@ public class ReceiptDto
     public decimal Price { get; set; }
     public ReceiptType ReceiptType { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public ReceiptPaymentStatus Status { get; set; }
 }

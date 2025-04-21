@@ -29,7 +29,17 @@ namespace TrefingreGymControl.Api.Domain.Receipts
             return await _dbContext.Receipts
                 .Include(x => x.Subscription)
                 .Include(x => x.Subscription.SubscriptionType)
+                .Include(x=> x.Subscription.SubscriptionType.Fees)
                 .Where(r => r.UserId == userId)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IList<Receipt>> GetAllPendingReceiptsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Receipts
+                .Include(x => x.Subscription)
+                .Include(x => x.Subscription.SubscriptionType)
+                .Where(r => r.Status == ReceiptPaymentStatus.Pending)
                 .ToListAsync(cancellationToken);
         }
     }

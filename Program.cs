@@ -17,6 +17,8 @@ using TrefingreGymControl.Api.Application.Common;
 using TrefingreGymControl.Api.Application.Receipts;
 using TrefingreGymControl.Api.Domain.Resources;
 using TrefingreGymControl.Api.Domain.Payments;
+using TrefingreGymControl.Api.BackgroundServices.Receipts;
+using TrefingreGymControl.Api.Domain.Fees;
 
 namespace TrefingreGymControl.Api
 {
@@ -71,6 +73,8 @@ namespace TrefingreGymControl.Api
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddFastEndpoints();
             builder.Services.AddHostedService<SubscriptionCancellationBackgroundService>();
+            // builder.Services.AddHostedService<RecurringSubscriptionJob>();
+            builder.Services.AddHostedService<ReceiptPaymentStatusUpdateJob>();
 
             builder.Services.AddSingleton<IAuthorizationHandler, SelfOnlyHandler>();
             builder.Services.AddSingleton<IAuthorizationHandler, SelfOrAdminOnlyHandler>();
@@ -83,6 +87,7 @@ namespace TrefingreGymControl.Api
             builder.Services.AddTransient<IResourceService, ResourceService>();
             builder.Services.AddTransient<ISubscriptionTypeService, SubscriptionTypeService>();
             builder.Services.AddTransient<IPaymentService, PaymentService>();
+            builder.Services.AddTransient<IFeeService, FeeService>();
             builder.Services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
             builder.Services.Scan(scan => scan
                 .FromAssemblyOf<ReceiptRequestedHandler>() // eller typeof(IDomainEvent)

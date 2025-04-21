@@ -31,7 +31,7 @@ namespace TrefingreGymControl.Api.Domain.Payments
             {
                 PaymentMethodTypes = new List<string>
             {
-                "card","mobilepay"
+                "card"
             },
                 LineItems = new List<SessionLineItemOptions>()
             {
@@ -42,17 +42,36 @@ namespace TrefingreGymControl.Api.Domain.Payments
                         Currency = "dkk",
                         ProductData = new SessionLineItemPriceDataProductDataOptions()
                         {
-                            Name = $"Abonnement: {subscriptionType.Name}"
+                            Name = $"Abonnement: {subscriptionType.Name}",
+
                         },
                         UnitAmountDecimal = subscriptionType.Price * 100,
                     },
                     Quantity = 1,
                 },
+
             },
                 Mode = "payment",
                 SuccessUrl = $"{_configuration["Stripe:SuccessUrl"]}/{payment.Id}",
                 CancelUrl = $"{_configuration["Stripe:CancelUrl"]}/{payment.Id}",
             };
+
+            foreach (var fee in subscriptionType.Fees)
+            {
+                options.LineItems.Add(new SessionLineItemOptions()
+                {
+                    PriceData = new SessionLineItemPriceDataOptions()
+                    {
+                        Currency = "dkk",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions()
+                        {
+                            Name = fee.Description,
+                        },
+                        UnitAmountDecimal = fee.Amount * 100,
+                    },
+                    Quantity = 1,
+                });
+            }
 
             var service = new SessionService();
             var session = await service.CreateAsync(options, cancellationToken: cancellationToken);
@@ -74,6 +93,14 @@ namespace TrefingreGymControl.Api.Domain.Payments
             {
                 throw new Exception($"Payment with id {paymentId} not found.");
             }
+
+            return payment;
+        }
+
+        public async Task<Payment?> GetPaymentFromSubscription(Guid subscriptionId, CancellationToken cancellationToken = default)
+        {
+            var payment = await _dbContext.Payments.OfType<SubscriptionPayment>()
+                .SingleOrDefaultAsync(x => x.SubscriptionId == subscriptionId, cancellationToken: cancellationToken);
 
             return payment;
         }

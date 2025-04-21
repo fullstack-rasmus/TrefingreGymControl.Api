@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using FastEndpoints;
 using FluentValidation;
+using TrefingreGymControl.Api.Domain.Fees.Dto;
 using TrefingreGymControl.Api.Domain.Subscriptions;
 using TrefingreGymControl.Domain.Subscriptions.Dto;
 
@@ -14,6 +15,7 @@ sealed class Request
     public decimal Price { get; set; }
     public bool IsRecurring { get; set; }
     public List<ResourceDto> Resources { get; set; } = new();
+    public List<FeeDto> Fees { get; set; } = new();
 }
 
 sealed class Validator : Validator<Request>

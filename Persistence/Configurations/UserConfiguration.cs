@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TrefingreGymControl.Api.Domain.Fees;
 using TrefingreGymControl.Api.Domain.Users;
 
 namespace TrefingreGymControl.Api.Persistence.Configurations

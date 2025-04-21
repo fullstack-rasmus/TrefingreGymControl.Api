@@ -42,6 +42,7 @@ namespace TrefingreGymControl.Api.BackgroundServices.Subscriptions
                     subscription.IsActive = false;
 
                     var newSub = subscriptionService.Subscribe(subscription.UserId, now, subscription.SubscriptionType, true);
+                    // HVAD MED BETALING? SIGNUP-FEE?
                     await dbContext.Subscriptions.AddAsync(newSub);
                     _logger.LogInformation("Created new subscription with ID {SubscriptionId}", newSub.Id);
                 }

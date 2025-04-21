@@ -10,7 +10,7 @@ namespace TrefingreGymControl.Api.Utils
     {
         public static Guid? GetUserId(this ClaimsPrincipal user)
         {
-            var userIdClaim = user.FindFirst("userId")?.Value;
+            var userIdClaim = user.FindFirst("UserId")?.Value;
             return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
         }
     }

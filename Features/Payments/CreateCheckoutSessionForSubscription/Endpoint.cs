@@ -19,7 +19,7 @@ sealed class Endpoint : Endpoint<Request, Response, Mapper>
     public override void Configure()
     {
         Post("/checkout/create-session");
-        Policies("SelfOnly", "UserOrAbove");
+        Policies("UserOrAbove");
     }
 
     public override async Task HandleAsync(Request req, CancellationToken ct)
